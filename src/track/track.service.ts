@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTrackDTO } from './dto/create-track.dto';
-import { UpdateTrackDTO } from './dto/update-artist.dto';
+import { UpdateTrackDTO } from './dto/update-track.dto';
 import { ITrack } from './interfaces/track.interface';
 import { TrackStorage } from './store/track.store';
 
@@ -35,5 +35,27 @@ export class TrackService {
 
     await this.storage.delete(id);
     return track;
+  }
+
+  async deleteAlbumInTrack(id: string): Promise<void> {
+    const tracks = await this.findAll();
+    const tracksWithAlbum = tracks.filter((track) => track.albumId === id);
+
+    await Promise.all(
+      tracksWithAlbum.map((track) =>
+        this.updateTrack(track.id, { ...track, albumId: null }),
+      ),
+    );
+  }
+
+  async deleteArtistInTrack(id: string): Promise<void> {
+    const tracks = await this.findAll();
+    const tracksWithAlbum = tracks.filter((track) => track.artistId === id);
+
+    await Promise.all(
+      tracksWithAlbum.map((track) =>
+        this.updateTrack(track.id, { ...track, artistId: null }),
+      ),
+    );
   }
 }

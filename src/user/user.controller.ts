@@ -30,7 +30,7 @@ export class UserController {
   }
 
   @Get(':id')
-  async getbyId(
+  async getById(
     @Param(
       'id',
       new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST }),

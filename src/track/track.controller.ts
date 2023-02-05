@@ -12,7 +12,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { CreateTrackDTO } from './dto/create-track.dto';
-import { UpdateTrackDTO } from './dto/update-artist.dto';
+import { UpdateTrackDTO } from './dto/update-track.dto';
 import { ITrack } from './interfaces/track.interface';
 import { TrackService } from './track.service';
 

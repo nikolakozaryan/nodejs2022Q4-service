@@ -1,5 +1,5 @@
 import { CreateTrackDTO } from '../dto/create-track.dto';
-import { UpdateTrackDTO } from '../dto/update-artist.dto';
+import { UpdateTrackDTO } from '../dto/update-track.dto';
 import { ITrack } from './track.interface';
 
 export interface ITrackStorage {
