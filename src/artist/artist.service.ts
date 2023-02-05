@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { TrackService } from 'src/track/track.service';
 import { CreateArtistDTO } from './dto/create-artist.dto';
 import { UpdateArtistDTO } from './dto/update-artist.dto';
 import { IArtist } from './interfaces/artist.interface';
@@ -6,7 +7,10 @@ import { ArtistStorage } from './store/artist.store';
 
 @Injectable()
 export class ArtistService {
-  constructor(private storage: ArtistStorage) {}
+  constructor(
+    private storage: ArtistStorage,
+    private trackService: TrackService,
+  ) {}
 
   async findAll(): Promise<IArtist[]> {
     const artists = await this.storage.findAll();
@@ -32,6 +36,8 @@ export class ArtistService {
   async deleteArtist(id: string): Promise<IArtist | null> {
     const artist = await this.findOne(id);
     if (!artist) return null;
+
+    await this.trackService.deleteArtistInTrack(id);
 
     await this.storage.delete(id);
     return artist;
