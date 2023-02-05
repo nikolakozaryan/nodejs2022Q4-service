@@ -3,5 +3,5 @@ export class UserDTO {
   login: string;
   version: number;
   createdAt: number;
-  updatedAt: number | null;
+  updatedAt: number;
 }

@@ -24,12 +24,13 @@ export class UserStorage implements IUserStorage {
 
   create(data: CreateUserDTO) {
     const id = uuidv4();
+    const creationDate = Date.now();
     const newUser: IUser = {
       ...data,
       id,
       version: 1,
-      createdAt: Date.now(),
-      updatedAt: null,
+      createdAt: creationDate,
+      updatedAt: creationDate,
     };
     this.users.push(newUser);
     return newUser;
