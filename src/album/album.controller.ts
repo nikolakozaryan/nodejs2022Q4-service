@@ -43,7 +43,7 @@ export class AlbumController {
   @Post()
   @HttpCode(201)
   async create(@Body() createAlbumDTO: CreateAlbumDTO): Promise<IAlbum> {
-    const created = await this.albumService.createUser(createAlbumDTO);
+    const created = await this.albumService.createAlbum(createAlbumDTO);
     return created;
   }
 
@@ -60,7 +60,7 @@ export class AlbumController {
     if (!album)
       throw new HttpException('Album not found', HttpStatus.NOT_FOUND);
 
-    const updated = await this.albumService.updateUser(id, updateAlbumDTO);
+    const updated = await this.albumService.updateAlbum(id, updateAlbumDTO);
     return updated;
   }
 
@@ -73,7 +73,7 @@ export class AlbumController {
     )
     id: string,
   ) {
-    const deletedUser = await this.albumService.deleteUser(id);
+    const deletedUser = await this.albumService.deleteAlbum(id);
 
     if (!deletedUser)
       throw new HttpException('Album not found', HttpStatus.NOT_FOUND);
