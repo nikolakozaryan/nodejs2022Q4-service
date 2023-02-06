@@ -24,8 +24,9 @@ export class UserController {
   async getAll(): Promise<UserDTO[]> {
     const result = await this.userService.findAll();
     return result.map((user) => {
-      const { password, ...reply } = user;
-      return reply;
+      const resp = { ...user };
+      delete resp.password;
+      return resp;
     });
   }
 
@@ -40,16 +41,18 @@ export class UserController {
     const result = await this.userService.findOne(id);
     if (!result)
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    const { password, ...reply } = result;
-    return reply;
+    const resp = { ...result };
+    delete resp.password;
+    return resp;
   }
 
   @Post()
   @HttpCode(201)
   async create(@Body() createUserDTO: CreateUserDTO): Promise<UserDTO> {
     const created = await this.userService.createUser(createUserDTO);
-    const { password, ...reply } = created;
-    return reply;
+    const resp = { ...created };
+    delete resp.password;
+    return resp;
   }
 
   @Put(':id')
@@ -70,8 +73,9 @@ export class UserController {
       );
 
     const updated = await this.userService.updateUser(id, updateUserDTO);
-    const { password, ...reply } = updated;
-    return reply;
+    const resp = { ...updated };
+    delete resp.password;
+    return resp;
   }
 
   @Delete(':id')
