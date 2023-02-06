@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { ArtistService } from 'src/artist/artist.service';
 import { TrackService } from 'src/track/track.service';
 import { CreateAlbumDTO } from './dto/create-album.dto';
 import { UpdateAlbumDTO } from './dto/update-album.dto';
@@ -8,6 +9,8 @@ import { AlbumStorage } from './store/album.store';
 @Injectable()
 export class AlbumService {
   constructor(
+    @Inject(forwardRef(() => ArtistService))
+    private artistService: ArtistService,
     private storage: AlbumStorage,
     private trackService: TrackService,
   ) {}
