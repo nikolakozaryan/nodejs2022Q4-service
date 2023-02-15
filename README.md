@@ -75,4 +75,4 @@ npm run format
 
 ## API
 
-API description is available [here]([lifehacker.ru](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/rest-service/assignment.md#assignment-rest-service)).
+API description is available [here](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/rest-service/assignment.md#assignment-rest-service).
