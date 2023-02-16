@@ -35,6 +35,18 @@ npm install
 npm start
 ```
 
+## Running application with Docker
+
+Download Docker Desktop [HERE](https://www.docker.com/) and install it.
+
+To run the app in detached mode:
+
+```
+docker-compose up -d
+```
+
+**_Nice to know_: in case you use Windows, please activate Hyper-V feature in Windows settings and disable "Use the WSL 2 based engine" option in Docker Desktop settings.**
+
 ## Testing
 
 After application running open new terminal and enter:
