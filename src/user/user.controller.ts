@@ -52,7 +52,7 @@ export class UserController {
     const created = await this.userService.createUser(createUserDTO);
     const resp = { ...created };
     delete resp.password;
-    return resp;
+    return created;
   }
 
   @Put(':id')
