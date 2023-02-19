@@ -7,8 +7,6 @@ import { ArtistModule } from './artist/artist.module';
 import { AlbumModule } from './album/album.module';
 import { FavsModule } from './favs/favs.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
-import { User } from './user/entity/user.entity';
 
 @Module({
   imports: [
@@ -24,13 +22,12 @@ import { User } from './user/entity/user.entity';
       username: 'postgres',
       password: 'secret',
       database: 'postgres',
-      entities: [User],
+      entities: [],
       synchronize: true,
+      autoLoadEntities: true,
     }),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-  constructor(private dataSource: DataSource) {}
-}
+export class AppModule {}
