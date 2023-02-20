@@ -4,6 +4,7 @@ export class CreateUserDTO {
   @IsString()
   @IsNotEmpty()
   login: string;
+
   @IsString()
   @IsNotEmpty()
   password: string;

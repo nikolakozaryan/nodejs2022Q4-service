@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -10,26 +11,24 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
-import { UserDTO } from './dto/user.dto';
+import { User } from './entity/user.entity';
 import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
-  async getAll(): Promise<UserDTO[]> {
-    const result = await this.userService.findAll();
-    return result.map((user) => {
-      const resp = { ...user };
-      delete resp.password;
-      return resp;
-    });
+  async getAll(): Promise<User[]> {
+    return this.userService.findAll();
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   async getById(
     @Param(
@@ -37,24 +36,20 @@ export class UserController {
       new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST }),
     )
     id: string,
-  ): Promise<UserDTO> {
-    const result = await this.userService.findOne(id);
-    if (!result)
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    const resp = { ...result };
-    delete resp.password;
-    return resp;
+  ): Promise<User> {
+    const user = await this.userService.findOne(id);
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    return user;
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   @HttpCode(201)
-  async create(@Body() createUserDTO: CreateUserDTO): Promise<UserDTO> {
-    const created = await this.userService.createUser(createUserDTO);
-    const resp = { ...created };
-    delete resp.password;
-    return resp;
+  async create(@Body() createUserDTO: CreateUserDTO): Promise<User> {
+    return this.userService.createUser(createUserDTO);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Put(':id')
   async update(
     @Param(
@@ -72,10 +67,7 @@ export class UserController {
         HttpStatus.FORBIDDEN,
       );
 
-    const updated = await this.userService.updateUser(id, updateUserDTO);
-    const resp = { ...updated };
-    delete resp.password;
-    return resp;
+    return this.userService.updateUser(id, updateUserDTO);
   }
 
   @Delete(':id')
@@ -87,9 +79,9 @@ export class UserController {
     )
     id: string,
   ) {
-    const deletedUser = await this.userService.deleteUser(id);
+    const user = await this.getById(id);
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
-    if (!deletedUser)
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    await this.userService.deleteUser(id);
   }
 }
