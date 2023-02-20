@@ -1,50 +1,54 @@
 import { Injectable } from '@nestjs/common';
-import { Inject } from '@nestjs/common/decorators';
-import { forwardRef } from '@nestjs/common/utils';
-import { AlbumService } from 'src/album/album.service';
-import { TrackService } from 'src/track/track.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateArtistDTO } from './dto/create-artist.dto';
 import { UpdateArtistDTO } from './dto/update-artist.dto';
-import { IArtist } from './interfaces/artist.interface';
-import { ArtistStorage } from './store/artist.store';
+import { Artist } from './artist.entity';
+import { TrackService } from 'src/track/track.service';
 
 @Injectable()
 export class ArtistService {
   constructor(
-    @Inject(forwardRef(() => AlbumService))
-    private albumService: AlbumService,
-    private storage: ArtistStorage,
+    @InjectRepository(Artist)
+    private artistRepository: Repository<Artist>,
     private trackService: TrackService,
   ) {}
 
-  async findAll(): Promise<IArtist[]> {
-    const artists = await this.storage.findAll();
+  async findAll(): Promise<Artist[]> {
+    const artists = await this.artistRepository.find();
     return artists;
   }
 
-  async findOne(id: string): Promise<IArtist | null> {
-    const artist = await this.storage.findById(id);
-    if (!artist) return null;
+  async findOne(id: string): Promise<Artist> {
+    const artist = await this.artistRepository.findOneBy({ id });
     return artist;
   }
 
-  async createArtist(data: CreateArtistDTO): Promise<IArtist> {
-    const created = await this.storage.create(data);
-    return created;
+  async createArtist(data: CreateArtistDTO): Promise<Artist> {
+    const { name, grammy } = data;
+    const artist = await this.artistRepository.save(new Artist(name, grammy));
+    return artist;
   }
 
-  async updateArtist(id: string, data: UpdateArtistDTO): Promise<IArtist> {
-    const updated = await this.storage.update(id, data);
+  async updateArtist(id: string, data: UpdateArtistDTO): Promise<Artist> {
+    const { name, grammy } = data;
+    const artist = await this.artistRepository.findOneBy({ id });
+
+    if (!artist) return null;
+
+    artist.name = name ?? artist.name;
+    artist.grammy = grammy ?? artist.grammy;
+
+    const updated = await this.artistRepository.save(artist);
     return updated;
   }
 
-  async deleteArtist(id: string): Promise<IArtist | null> {
-    const artist = await this.findOne(id);
+  async deleteArtist(id: string): Promise<Artist | null> {
+    const artist = await this.artistRepository.findOneBy({ id });
     if (!artist) return null;
 
     await this.trackService.deleteArtistInTrack(id);
-
-    await this.storage.delete(id);
+    await this.artistRepository.remove(artist);
     return artist;
   }
 }
