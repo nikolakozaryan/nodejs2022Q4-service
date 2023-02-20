@@ -7,6 +7,7 @@ import { ArtistModule } from './artist/artist.module';
 import { AlbumModule } from './album/album.module';
 import { FavsModule } from './favs/favs.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -15,13 +16,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ArtistModule,
     AlbumModule,
     FavsModule,
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'secret',
-      database: 'postgres',
+      url: process.env.DATABASE_URL,
       entities: [],
       synchronize: true,
       autoLoadEntities: true,
