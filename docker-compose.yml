@@ -1,0 +1,40 @@
+version: '3.0'
+
+services:
+  api:
+    expose:
+      - 4000
+    build: .
+    restart: on-failure
+    networks:
+      - service-network
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - postgres
+    environment:
+      PORT: ${PORT}
+      DATABASE_URL: ${DATABASE_URL}
+    volumes:
+      - ./src:/app/src
+  postgres:
+    expose:
+      - 5432
+    build: ./db/
+    restart: on-failure
+    networks:
+      - service-network
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - db-logs:/var/log/postgresql
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+volumes:
+  db-data:
+  db-logs:
+
+networks:
+  service-network:

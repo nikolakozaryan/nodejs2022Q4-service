@@ -14,16 +14,16 @@ import {
 import { ArtistService } from './artist.service';
 import { CreateArtistDTO } from './dto/create-artist.dto';
 import { UpdateArtistDTO } from './dto/update-artist.dto';
-import { IArtist } from './interfaces/artist.interface';
+import { Artist } from './artist.entity';
 
 @Controller('artist')
 export class ArtistController {
   constructor(private artistService: ArtistService) {}
 
   @Get()
-  async getAll(): Promise<IArtist[]> {
-    const result = await this.artistService.findAll();
-    return result;
+  async getAll(): Promise<Artist[]> {
+    const artists = await this.artistService.findAll();
+    return artists;
   }
 
   @Get(':id')
@@ -33,7 +33,7 @@ export class ArtistController {
       new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST }),
     )
     id: string,
-  ): Promise<IArtist> {
+  ): Promise<Artist> {
     const artist = await this.artistService.findOne(id);
     if (!artist)
       throw new HttpException('Artist not found', HttpStatus.NOT_FOUND);
@@ -42,11 +42,9 @@ export class ArtistController {
 
   @Post()
   @HttpCode(201)
-  async create(@Body() createArtistDTO: CreateArtistDTO): Promise<IArtist> {
-    const createdArtist = await this.artistService.createArtist(
-      createArtistDTO,
-    );
-    return createdArtist;
+  async create(@Body() createArtistDTO: CreateArtistDTO): Promise<Artist> {
+    const artist = await this.artistService.createArtist(createArtistDTO);
+    return artist;
   }
 
   @Put(':id')
@@ -58,15 +56,11 @@ export class ArtistController {
     id: string,
     @Body() updateArtistDTO: UpdateArtistDTO,
   ) {
-    const artist = await this.artistService.findOne(id);
+    const artist = await this.artistService.updateArtist(id, updateArtistDTO);
     if (!artist)
       throw new HttpException('Artist not found', HttpStatus.NOT_FOUND);
 
-    const updatedArtist = await this.artistService.updateArtist(
-      id,
-      updateArtistDTO,
-    );
-    return updatedArtist;
+    return artist;
   }
 
   @Delete(':id')
@@ -78,9 +72,9 @@ export class ArtistController {
     )
     id: string,
   ) {
-    const deletedArtist = await this.artistService.deleteArtist(id);
+    const deleted = await this.artistService.deleteArtist(id);
 
-    if (!deletedArtist)
+    if (!deleted)
       throw new HttpException('Artist not found', HttpStatus.NOT_FOUND);
   }
 }
